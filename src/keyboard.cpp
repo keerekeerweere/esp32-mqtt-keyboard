@@ -39,7 +39,8 @@ void sendAzertyChar(char c) {
 }
 
 void keyboard_write(uint8_t c) {
-  sendAzertyChar((char)c);
+  //sendAzertyChar((char)c);
+  Keyboard.write(c);
 }
 
 void keyboard_home() {

@@ -29,7 +29,7 @@ bool checkMQTTconnection();
 
 void mqtt_setup() {
   // Set bigger buffer size if needed
-  // mqttClient.setBufferSize(1280);
+  //mqttClient.setBufferSize(1540);
 }
 
 void mqtt_loop(){
@@ -66,6 +66,11 @@ bool checkMQTTconnection() {
         mqttClient.subscribe(MQTTCMND_LEFT);
         mqttClient.subscribe(MQTTCMND_SELECT);
         mqttClient.subscribe(MQTTCMND_SENDSTRING);
+        mqttClient.subscribe(MQTTCMND_ENTER);
+
+        mqttClient.subscribe(MQTTCMND_BACKSPACE);
+        mqttClient.subscribe(MQTTCMND_DEL);
+        mqttClient.subscribe(MQTTCMND_FUNCTION);
 
         mqttClient.subscribe(MQTTCMND_BACK);
         mqttClient.subscribe(MQTTCMND_HOME);
@@ -156,8 +161,8 @@ bool mqtt_publish_tele() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  // handle message arrived
-  std::string strPayload(reinterpret_cast<const char *>(payload), length);
+    // handle message arrived
+    std::string strPayload(reinterpret_cast<const char *>(payload), length);
 
   // Serial.printf("MQTT message arrived [%s] %s\r\n", topic, strPayload.c_str());
 
@@ -183,8 +188,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (doLog) {Serial.printf("LEFT received\r\n");}
     keyboard_write(KEY_LEFT_ARROW);
 
-  } else if (strcmp(MQTTCMND_SELECT, topic) == 0) {
-    if (doLog) {Serial.printf("SELECT received\r\n");}
+  } else if (strcmp(MQTTCMND_ENTER, topic) == 0) {
+    if (doLog) {Serial.printf("ENTER received\r\n");}
     keyboard_write(KEY_RETURN);
 
   } else if (strcmp(MQTTCMND_SENDSTRING, topic) == 0) {
@@ -192,9 +197,20 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (strPayload != "") {
       keyboard_sendString(strPayload.c_str());
     }
-
-
-
+  } else if (strcmp(MQTTCMND_BACKSPACE, topic) == 0) {
+    if (doLog) {Serial.printf("BACKSPACE received\r\n");}
+    keyboard_write(KEY_BACKSPACE);
+  } else if (strcmp(MQTTCMND_DEL, topic) == 0) {
+    if (doLog) {Serial.printf("DEL received\r\n");}
+    keyboard_write(KEY_DELETE);
+  } else if (strcmp(MQTTCMND_FUNCTION, topic) == 0) {
+    if (doLog) {Serial.printf("FUNCTION received\r\n");}
+    if (strcmp("F1", strPayload.c_str())==0)
+      keyboard_write(KEY_F1);
+    else if (strcmp("F2", strPayload.c_str())==0)
+      keyboard_write(KEY_F2);
+    else if (strcmp("F11", strPayload.c_str())==0)
+      keyboard_write(KEY_F11);
   } else if (strcmp(MQTTCMND_BACK, topic) == 0) {
     if (doLog) {Serial.printf("BACK received\r\n");}
     // test which one works best for your device
@@ -210,8 +226,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
   } else if (strcmp(MQTTCMND_MENU, topic) == 0) {
     if (doLog) {Serial.printf("MENU received\r\n");}
     keyboard_write(0xED); // 0xDA + 13 = 0xED
-
-
 
   // for more consumerControl codes see
   // https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/src/USBHIDConsumerControl.h
@@ -257,8 +271,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
   } else if (strcmp(MQTTCMND_VOLUME_DECREMENT, topic) == 0) {
     if (doLog) {Serial.printf("VOLUME_DECREMENT received\r\n");}
     consumerControl_write(CONSUMER_CONTROL_VOLUME_DECREMENT);
-
-
 
   } else if (strcmp(MQTTCMND_RESTART_ESP32, topic) == 0) {
     if (doLog) {Serial.printf("RESTART_ESP32 received\r\n");}
