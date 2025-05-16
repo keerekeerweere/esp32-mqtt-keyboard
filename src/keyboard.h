@@ -24,3 +24,4 @@ void keyboard_home();
 void keyboard_sendString(const String &s);
 void consumerControl_write(uint16_t value);
 void consumerControl_longpress(uint16_t value);
+void sendAzertyChar(char c);
