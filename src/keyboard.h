@@ -1,3 +1,5 @@
+#define MQTTCMND_WILDCARD            UNIQUE_DEVICE_NAME "/cmnd/#"
+
 #define MQTTCMND_UP                  UNIQUE_DEVICE_NAME "/cmnd/UP"
 #define MQTTCMND_DOWN                UNIQUE_DEVICE_NAME "/cmnd/DOWN"
 #define MQTTCMND_RIGHT               UNIQUE_DEVICE_NAME "/cmnd/RIGHT"
@@ -9,6 +11,7 @@
 #define MQTTCMND_BACK                UNIQUE_DEVICE_NAME "/cmnd/BACKS"
 #define MQTTCMND_DEL                 UNIQUE_DEVICE_NAME "/cmnd/DEL"
 #define MQTTCMND_FUNCTION            UNIQUE_DEVICE_NAME "/cmnd/FUNCTION"
+#define MQTTCMND_ESC                 UNIQUE_DEVICE_NAME "/cmnd/ESC"
 #define MQTTCMND_HOME                UNIQUE_DEVICE_NAME "/cmnd/HOME"
 #define MQTTCMND_MENU                UNIQUE_DEVICE_NAME "/cmnd/MENU"
 #define MQTTCMND_SCAN_PREVIOUS_TRACK UNIQUE_DEVICE_NAME "/cmnd/SCAN_PREVIOUS_TRACK"

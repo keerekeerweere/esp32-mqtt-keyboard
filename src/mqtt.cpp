@@ -60,6 +60,8 @@ bool checkMQTTconnection() {
     
         // subscribes to messages with given topic.
         // Callback function will be called 1. in client.loop() 2. when sending a message
+        mqttClient.subscribe(MQTTCMND_WILDCARD);
+        /*
         mqttClient.subscribe(MQTTCMND_UP);
         mqttClient.subscribe(MQTTCMND_DOWN);
         mqttClient.subscribe(MQTTCMND_RIGHT);
@@ -67,6 +69,7 @@ bool checkMQTTconnection() {
         mqttClient.subscribe(MQTTCMND_SELECT);
         mqttClient.subscribe(MQTTCMND_SENDSTRING);
         mqttClient.subscribe(MQTTCMND_ENTER);
+        mqttClient.subscribe(MQTTCMND_ESC);
 
         mqttClient.subscribe(MQTTCMND_BACKSPACE);
         mqttClient.subscribe(MQTTCMND_DEL);
@@ -88,6 +91,7 @@ bool checkMQTTconnection() {
         mqttClient.subscribe(MQTTCMND_VOLUME_DECREMENT);
 
         mqttClient.subscribe(MQTTCMND_RESTART_ESP32);
+        */
       } else {
         Serial.printf("  MQTT connection failed (but WiFi is available). Will try later ...\r\n");
       }
@@ -187,6 +191,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   } else if (strcmp(MQTTCMND_LEFT, topic) == 0) {
     if (doLog) {Serial.printf("LEFT received\r\n");}
     keyboard_write(KEY_LEFT_ARROW);
+
+  } else if (strcmp(MQTTCMND_ESC, topic) == 0) {
+    if (doLog) {Serial.printf("ESC received\r\n");}
+    keyboard_write(KEY_ESC);
 
   } else if (strcmp(MQTTCMND_ENTER, topic) == 0) {
     if (doLog) {Serial.printf("ENTER received\r\n");}
