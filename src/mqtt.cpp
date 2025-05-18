@@ -57,41 +57,10 @@ bool checkMQTTconnection() {
       // try to connect to mqtt server
       if (mqttClient.connect(MQTT_CLIENTNAME, MQTT_USER, MQTT_PASS)) {
         Serial.printf("  Successfully connected to MQTT broker\r\n");
-    
-        // subscribes to messages with given topic.
+        // subscribes to all relevant messages with given topic. 
+        // wildcard subscribes for everything on the 3rd topic part: "/cmnd/#" e.g. esphid1/cmnd/ESC
         // Callback function will be called 1. in client.loop() 2. when sending a message
         mqttClient.subscribe(MQTTCMND_WILDCARD);
-        /*
-        mqttClient.subscribe(MQTTCMND_UP);
-        mqttClient.subscribe(MQTTCMND_DOWN);
-        mqttClient.subscribe(MQTTCMND_RIGHT);
-        mqttClient.subscribe(MQTTCMND_LEFT);
-        mqttClient.subscribe(MQTTCMND_SELECT);
-        mqttClient.subscribe(MQTTCMND_SENDSTRING);
-        mqttClient.subscribe(MQTTCMND_ENTER);
-        mqttClient.subscribe(MQTTCMND_ESC);
-
-        mqttClient.subscribe(MQTTCMND_BACKSPACE);
-        mqttClient.subscribe(MQTTCMND_DEL);
-        mqttClient.subscribe(MQTTCMND_FUNCTION);
-
-        mqttClient.subscribe(MQTTCMND_BACK);
-        mqttClient.subscribe(MQTTCMND_HOME);
-        mqttClient.subscribe(MQTTCMND_MENU);
-
-        mqttClient.subscribe(MQTTCMND_SCAN_PREVIOUS_TRACK);
-        mqttClient.subscribe(MQTTCMND_REWIND_LONG);
-        mqttClient.subscribe(MQTTCMND_REWIND);
-        mqttClient.subscribe(MQTTCMND_PLAYPAUSE);
-        mqttClient.subscribe(MQTTCMND_FASTFORWARD);
-        mqttClient.subscribe(MQTTCMND_FASTFORWARD_LONG);
-        mqttClient.subscribe(MQTTCMND_SCAN_NEXT_TRACK);
-        mqttClient.subscribe(MQTTCMND_MUTE);
-        mqttClient.subscribe(MQTTCMND_VOLUME_INCREMENT);
-        mqttClient.subscribe(MQTTCMND_VOLUME_DECREMENT);
-
-        mqttClient.subscribe(MQTTCMND_RESTART_ESP32);
-        */
       } else {
         Serial.printf("  MQTT connection failed (but WiFi is available). Will try later ...\r\n");
       }
