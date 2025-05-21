@@ -1,0 +1,2 @@
+ProtoKeyEvent.functionkey max_size:64
+ProtoKeyEvent.sendstring max_size:64
