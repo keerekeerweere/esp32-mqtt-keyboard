@@ -6,7 +6,6 @@ const KeyMapEntry azertyKeyMap[] = {
     {'&', {0x1E, MOD_NONE}},
     {0x00E9, {0x1F, MOD_NONE}}, // é
     {'"', {0x20, MOD_NONE}},
-    {'\'', {0x21, MOD_NONE}},
     {'(', {0x22, MOD_NONE}},
     {0x00A7, {0x23, MOD_NONE}}, // §
     {0x00E8, {0x24, MOD_NONE}}, // è
@@ -27,14 +26,15 @@ const KeyMapEntry azertyKeyMap[] = {
     {'8', {0x25, MOD_LEFT_SHIFT}},
     {'9', {0x26, MOD_LEFT_SHIFT}}, // 
     {'0', {0x27, MOD_LEFT_SHIFT}}, // 
-    {'°', {0x2D, MOD_LEFT_SHIFT}},
+    {0x00B0, {0x2D, MOD_LEFT_SHIFT}}, // °
     {'_', {0x2E, MOD_LEFT_SHIFT}},
 
-
     // AltGr symbols
-    {'|', {0x1E, MOD_RIGHT_ALT}},
-    {'@', {0x1F, MOD_RIGHT_ALT}},
-    {'#', {0x20, MOD_RIGHT_ALT}},
+    {0x007c, {0x64, MOD_RIGHT_ALT}}, // |
+    {0x0040, {0x1F, MOD_RIGHT_ALT}}, // @
+    {0x0023, {0x20, MOD_RIGHT_ALT}}, // #
+    {0x20AC, {0x08, MOD_RIGHT_ALT}}, // €
+    {'\'', {0x64, MOD_RIGHT_ALT}},
 
     // Whitespace and control
     {' ', {0x2C, MOD_NONE}},
@@ -65,7 +65,7 @@ const KeyMapEntry azertyKeyMap[] = {
     {'I', {0x0C, MOD_LEFT_SHIFT}},
     {'O', {0x12, MOD_LEFT_SHIFT}},
     {'P', {0x13, MOD_LEFT_SHIFT}},
-    {'¨', {0x2F, MOD_LEFT_SHIFT}},
+    {0x00A8, {0x2F, MOD_LEFT_SHIFT}}, //¨
     {'*', {0x30, MOD_LEFT_SHIFT}},
 
 
@@ -80,8 +80,8 @@ const KeyMapEntry azertyKeyMap[] = {
     {'k', {0x0E, MOD_NONE}},
     {'l', {0x0F, MOD_NONE}},
     {'m', {0x33, MOD_NONE}}, // matches AZERTY layout
-    {'ù', {0x34, MOD_NONE}},
-    {'µ', {0x32, MOD_NONE}},
+    {0x00F9, {0x34, MOD_NONE}}, //ù
+    {0x00B5, {0x32, MOD_NONE}}, // µ
 
     {'Q', {0x04, MOD_LEFT_SHIFT}},
     {'S', {0x16, MOD_LEFT_SHIFT}},
@@ -94,31 +94,33 @@ const KeyMapEntry azertyKeyMap[] = {
     {'L', {0x0F, MOD_LEFT_SHIFT}},
     {'M', {0x33, MOD_LEFT_SHIFT}}, // matches AZERTY layout
     {'%', {0x34, MOD_LEFT_SHIFT}},
-    {'£', {0x32, MOD_LEFT_SHIFT}},
+    {0x00C2, {0x22, MOD_LEFT_SHIFT}}, //£
 
 
     // Third row
+    {'<', {0x64, MOD_NONE}},
     {'w', {0x1D, MOD_NONE}},
     {'x', {0x1B, MOD_NONE}},
     {'c', {0x06, MOD_NONE}},
     {'v', {0x19, MOD_NONE}},
     {'b', {0x05, MOD_NONE}},
     {'n', {0x11, MOD_NONE}},
-    {',', {0x37, MOD_NONE}},
+    {',', {0x10, MOD_NONE}},
     {';', {0x36, MOD_NONE}},
-    {':', {0x38, MOD_NONE}},
-    {'=', {0x2E, MOD_NONE}},
+    {':', {0x37, MOD_NONE}},
+    {'=', {0x38, MOD_NONE}},
 
+    {'>', {0x64, MOD_LEFT_SHIFT}},
     {'W', {0x1D, MOD_LEFT_SHIFT}},
     {'X', {0x1B, MOD_LEFT_SHIFT}},
     {'C', {0x06, MOD_LEFT_SHIFT}},
     {'V', {0x19, MOD_LEFT_SHIFT}},
     {'B', {0x05, MOD_LEFT_SHIFT}},
     {'N', {0x11, MOD_LEFT_SHIFT}},
-    {'?', {0x37, MOD_LEFT_SHIFT}},
+    {'?', {0x10, MOD_LEFT_SHIFT}},
     {'.', {0x36, MOD_LEFT_SHIFT}},
-    {'/', {0x38, MOD_LEFT_SHIFT}},
-    {'+', {0x2E, MOD_LEFT_SHIFT}},
+    {'/', {0x37, MOD_LEFT_SHIFT}},
+    {'+', {0x38, MOD_LEFT_SHIFT}},
 
 };
 

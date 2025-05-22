@@ -62,39 +62,52 @@ void keyboard_setup() {
   Keyboard.begin();
 }
 
-void sendMappedChar(uint32_t c, uint8_t modifier) {
+void sendMappedChar(uint32_t c, uint16_t modifier) {
   KeyEvent e = getMappedKeyEvent(c);
   if (e.keycode == 0) {
     Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "sendMappedChar - no key found for UTF-8: U+%04lX", c);  
     return;
   }
   uint8_t key = e.keycode;
-  uint8_t mod = (e.modifier != MOD_NONE)  ? e.modifier : modifier;
-  Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "sendMappedChar - found keycode %02X and mod  %02X", key, mod);  
+  uint16_t mod = (e.modifier != MOD_NONE)  ? e.modifier : modifier;
+  Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "sendMappedChar -U+%04lX - found keycode 0x%02X and mod 0x%02X",c ,key, mod);  
 
   keyboard_write(key, mod);
 }
 
-
-void keyboard_write(uint8_t key, uint8_t modifier) {
-  Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "keyboard_write : %u", key);
-
-  if (modifier != MOD_NONE) {
-        //decode possibly multiple modifiers
+void keyboard_mod_press(uint16_t modifier) {
       if (modifier & MOD_LEFT_CTRL) Keyboard.press(KEY_LEFT_CTRL);
       if (modifier & MOD_LEFT_SHIFT) Keyboard.press(KEY_LEFT_SHIFT);
       if (modifier & MOD_LEFT_ALT) Keyboard.press(KEY_LEFT_ALT);
-      if (modifier & MOD_LEFT_CTRL) Keyboard.press(KEY_LEFT_CTRL);
+
+      if (modifier & MOD_RIGHT_CTRL) Keyboard.press(KEY_RIGHT_CTRL);
+      if (modifier & MOD_RIGHT_SHIFT) Keyboard.press(KEY_RIGHT_SHIFT);
+      if (modifier & MOD_RIGHT_ALT) Keyboard.press(KEY_RIGHT_ALT);
+}
+
+void keyboard_mod_release(uint16_t modifier) {
+      if (modifier & MOD_LEFT_CTRL) Keyboard.release(KEY_LEFT_CTRL);
+      if (modifier & MOD_LEFT_SHIFT) Keyboard.release(KEY_LEFT_SHIFT);
+      if (modifier & MOD_LEFT_ALT) Keyboard.release(KEY_LEFT_ALT);
+
+      if (modifier & MOD_RIGHT_CTRL) Keyboard.release(KEY_RIGHT_CTRL);
+      if (modifier & MOD_RIGHT_SHIFT) Keyboard.release(KEY_RIGHT_SHIFT);
+      if (modifier & MOD_RIGHT_ALT) Keyboard.release(KEY_RIGHT_ALT);
+}
+
+void keyboard_write(uint8_t key, uint16_t modifier) {
+  Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "keyboard_write : %u", key);
+
+  if (modifier != MOD_NONE) {
+      //decode possibly multiple modifiers
+      keyboard_mod_press(modifier);
      
       Keyboard.pressRaw(key);
       delay(5);
       Keyboard.releaseRaw(key);
 
+      keyboard_mod_release(modifier);
 
-      if (modifier & MOD_LEFT_CTRL) Keyboard.release(KEY_LEFT_CTRL);
-      if (modifier & MOD_LEFT_SHIFT) Keyboard.release(KEY_LEFT_SHIFT);
-      if (modifier & MOD_LEFT_ALT) Keyboard.release(KEY_LEFT_ALT);
-      if (modifier & MOD_LEFT_CTRL) Keyboard.release(KEY_LEFT_CTRL);
     } else {
 
       Keyboard.pressRaw(key);
@@ -103,7 +116,7 @@ void keyboard_write(uint8_t key, uint8_t modifier) {
   }
 }
 
-void keyboard_function(const std::string &s, uint8_t modifier)  {
+void keyboard_function(const std::string &s, uint16_t modifier)  {
   //ignore empty items
   if (s.length()==0) return;
   uint8_t key = 0;

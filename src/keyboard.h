@@ -79,10 +79,10 @@
 
 
 void keyboard_setup(void);
-void keyboard_write(uint8_t c, uint8_t modifier);
+void keyboard_write(uint8_t c, uint16_t modifier);
 void keyboard_home();
 void keyboard_sendString(const std::string &s);
-void keyboard_function(const std::string &s, const uint8_t modifier);
+void keyboard_function(const std::string &s, const uint16_t modifier);
 void consumerControl_write(uint16_t value);
 void consumerControl_longpress(uint16_t value);
-void sendMappedChar(uint32_t c, uint8_t modifier);
+void sendMappedChar(uint32_t c, uint16_t modifier);

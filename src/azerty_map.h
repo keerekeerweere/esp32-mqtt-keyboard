@@ -7,7 +7,7 @@
 // Struct to represent a key event
 struct KeyEvent {
     uint8_t keycode;
-    uint8_t modifier;
+    uint16_t modifier;
 };
 
 struct KeyMapEntry {

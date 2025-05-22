@@ -15,14 +15,15 @@ app = Flask(__name__)
 
 # Modifier masks
 # Modifier masks: (LEFT, RIGHT)
-MOD_LEFT_CTRL   = 1 << 0
-MOD_LEFT_SHIFT  = 1 << 1
-MOD_LEFT_ALT    = 1 << 2
-MOD_LEFT_GUI    = 1 << 3
-MOD_RIGHT_CTRL  = 1 << 4
-MOD_RIGHT_SHIFT = 1 << 5
-MOD_RIGHT_ALT   = 1 << 6
-MOD_RIGHT_GUI   = 1 << 7
+MOD_NONE             = 0
+MOD_LEFT_CTRL       = 1 <<  8
+MOD_LEFT_SHIFT      = 1 <<  9
+MOD_LEFT_ALT        = 1 << 10
+MOD_LEFT_GUI        = 1 << 11
+MOD_RIGHT_CTRL      = 1 << 12
+MOD_RIGHT_SHIFT     = 1 << 13
+MOD_RIGHT_ALT       = 1 << 14
+MOD_RIGHT_GUI       = 1 << 15
 
 # MQTT setup
 MQTT_PROTOCOL = os.getenv("MQTT_PROTOCOL", "mqtt")
@@ -72,7 +73,7 @@ def keypress():
     if not key or not isinstance(location, int):
         return jsonify({'error': 'Missing or invalid key or location'}), 400
 
-    mod = 0
+    mod = MOD_NONE
     if data.get('ctrlKey'):
         mod |= MOD_RIGHT_CTRL if location == 2 else MOD_LEFT_CTRL
     if data.get('shiftKey'):
