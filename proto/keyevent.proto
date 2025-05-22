@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message ProtoKeyEvent {
+  optional uint32 modifier = 1;
+  optional string functionkey = 2 ;
+  optional string sendstring = 3 ;
+}

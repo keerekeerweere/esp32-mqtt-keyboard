@@ -1,7 +1,147 @@
 #include "azerty_map.h"
+#include "keyboard_map.h"
+
+const KeyMapEntry azertyKeyMap[] = {
+    // Top number row (AZERTY symbols)
+    {'&', {0x1E, MOD_NONE}},
+    {0x00E9, {0x1F, MOD_NONE}}, // é
+    {'"', {0x20, MOD_NONE}},
+    {'(', {0x22, MOD_NONE}},
+    {0x00A7, {0x23, MOD_NONE}}, // §
+    {0x00E8, {0x24, MOD_NONE}}, // è
+    {'!', {0x25, MOD_NONE}},
+    {0x00E7, {0x26, MOD_NONE}}, // ç
+    {0x00E0, {0x27, MOD_NONE}}, // à
+    {')', {0x2D, MOD_NONE}},
+    {'-', {0x2E, MOD_NONE}},
+
+
+    {'1', {0x1E, MOD_LEFT_SHIFT}},
+    {'2', {0x1F, MOD_LEFT_SHIFT}}, // 
+    {'3', {0x20, MOD_LEFT_SHIFT}},
+    {'4', {0x21, MOD_LEFT_SHIFT}},
+    {'5', {0x22, MOD_LEFT_SHIFT}},
+    {'6', {0x23, MOD_LEFT_SHIFT}}, // 
+    {'7', {0x24, MOD_LEFT_SHIFT}}, // 
+    {'8', {0x25, MOD_LEFT_SHIFT}},
+    {'9', {0x26, MOD_LEFT_SHIFT}}, // 
+    {'0', {0x27, MOD_LEFT_SHIFT}}, // 
+    {0x00B0, {0x2D, MOD_LEFT_SHIFT}}, // °
+    {'_', {0x2E, MOD_LEFT_SHIFT}},
+
+    // AltGr symbols
+    {0x007c, {0x64, MOD_RIGHT_ALT}}, // |
+    {0x0040, {0x1F, MOD_RIGHT_ALT}}, // @
+    {0x0023, {0x20, MOD_RIGHT_ALT}}, // #
+    {0x20AC, {0x08, MOD_RIGHT_ALT}}, // €
+    {'\'', {0x64, MOD_RIGHT_ALT}},
+
+    // Whitespace and control
+    {' ', {0x2C, MOD_NONE}},
+    {'\n', {0x28, MOD_NONE}},
+    {'\b', {0x2A, MOD_NONE}},
+
+    // First row
+    {'a', {0x14, MOD_NONE}},
+    {'z', {0x1A, MOD_NONE}},
+    {'e', {0x08, MOD_NONE}},
+    {'r', {0x15, MOD_NONE}},
+    {'t', {0x17, MOD_NONE}},
+    {'y', {0x1C, MOD_NONE}},
+    {'u', {0x18, MOD_NONE}},
+    {'i', {0x0C, MOD_NONE}},
+    {'o', {0x12, MOD_NONE}},
+    {'p', {0x13, MOD_NONE}},
+    {'^', {0x2F, MOD_NONE}},
+    {'$', {0x30, MOD_NONE}},
+
+    {'A', {0x14, MOD_LEFT_SHIFT}},
+    {'Z', {0x1A, MOD_LEFT_SHIFT}},
+    {'E', {0x08, MOD_LEFT_SHIFT}},
+    {'R', {0x15, MOD_LEFT_SHIFT}},
+    {'T', {0x17, MOD_LEFT_SHIFT}},
+    {'Y', {0x1C, MOD_LEFT_SHIFT}},
+    {'U', {0x18, MOD_LEFT_SHIFT}},
+    {'I', {0x0C, MOD_LEFT_SHIFT}},
+    {'O', {0x12, MOD_LEFT_SHIFT}},
+    {'P', {0x13, MOD_LEFT_SHIFT}},
+    {0x00A8, {0x2F, MOD_LEFT_SHIFT}}, //¨
+    {'*', {0x30, MOD_LEFT_SHIFT}},
+
+
+    // Second row
+    {'q', {0x04, MOD_NONE}},
+    {'s', {0x16, MOD_NONE}},
+    {'d', {0x07, MOD_NONE}},
+    {'f', {0x09, MOD_NONE}},
+    {'g', {0x0A, MOD_NONE}},
+    {'h', {0x0B, MOD_NONE}},
+    {'j', {0x0D, MOD_NONE}},
+    {'k', {0x0E, MOD_NONE}},
+    {'l', {0x0F, MOD_NONE}},
+    {'m', {0x33, MOD_NONE}}, // matches AZERTY layout
+    {0x00F9, {0x34, MOD_NONE}}, //ù
+    {0x00B5, {0x32, MOD_NONE}}, // µ
+
+    {'Q', {0x04, MOD_LEFT_SHIFT}},
+    {'S', {0x16, MOD_LEFT_SHIFT}},
+    {'D', {0x07, MOD_LEFT_SHIFT}},
+    {'F', {0x09, MOD_LEFT_SHIFT}},
+    {'G', {0x0A, MOD_LEFT_SHIFT}},
+    {'H', {0x0B, MOD_LEFT_SHIFT}},
+    {'J', {0x0D, MOD_LEFT_SHIFT}},
+    {'K', {0x0E, MOD_LEFT_SHIFT}},
+    {'L', {0x0F, MOD_LEFT_SHIFT}},
+    {'M', {0x33, MOD_LEFT_SHIFT}}, // matches AZERTY layout
+    {'%', {0x34, MOD_LEFT_SHIFT}},
+    {0x00C2, {0x22, MOD_LEFT_SHIFT}}, //£
+
+
+    // Third row
+    {'<', {0x64, MOD_NONE}},
+    {'w', {0x1D, MOD_NONE}},
+    {'x', {0x1B, MOD_NONE}},
+    {'c', {0x06, MOD_NONE}},
+    {'v', {0x19, MOD_NONE}},
+    {'b', {0x05, MOD_NONE}},
+    {'n', {0x11, MOD_NONE}},
+    {',', {0x10, MOD_NONE}},
+    {';', {0x36, MOD_NONE}},
+    {':', {0x37, MOD_NONE}},
+    {'=', {0x38, MOD_NONE}},
+
+    {'>', {0x64, MOD_LEFT_SHIFT}},
+    {'W', {0x1D, MOD_LEFT_SHIFT}},
+    {'X', {0x1B, MOD_LEFT_SHIFT}},
+    {'C', {0x06, MOD_LEFT_SHIFT}},
+    {'V', {0x19, MOD_LEFT_SHIFT}},
+    {'B', {0x05, MOD_LEFT_SHIFT}},
+    {'N', {0x11, MOD_LEFT_SHIFT}},
+    {'?', {0x10, MOD_LEFT_SHIFT}},
+    {'.', {0x36, MOD_LEFT_SHIFT}},
+    {'/', {0x37, MOD_LEFT_SHIFT}},
+    {'+', {0x38, MOD_LEFT_SHIFT}},
+
+};
+
+const long azertyKeyMapSize = sizeof(azertyKeyMap) / sizeof(azertyKeyMap[0]);
+
+KeyEvent getMappedKeyEvent(uint32_t characterCode)
+{
+    for (long i = 0; i < azertyKeyMapSize; ++i)
+    {
+        if (azertyKeyMap[i].characterCode == characterCode)
+        {
+            return azertyKeyMap[i].event;
+        }
+    }
+    return {0x00, MOD_NONE}; // Default: no match
+}
+
+/*
 
 // Inspired by NicoHood's positional mapping for Belgian AZERTY
-AzertyMapping getAzertyMapping(char c) {
+KeyboardMapping getKeyboardMapping(uint32_t c) {
     switch (c) {
         // Top number row (AZERTY symbols)
         case '&': return {0x1E, MOD_NONE}; // same as '1'
@@ -17,9 +157,9 @@ AzertyMapping getAzertyMapping(char c) {
         case ')': return {0x2D, MOD_NONE};
         case '-': return {0x2E, MOD_NONE};
 
-        case '|': return {0x1E, MOD_ALTGR};
-        case '@': return {0x1F, MOD_ALTGR};
-        case '#': return {0x20, MOD_ALTGR};
+        case '|': return {0x1E, MOD_RIGHT_ALT};
+        case '@': return {0x1F, MOD_RIGHT_ALT};
+        case '#': return {0x20, MOD_RIGHT_ALT};
 
         // First row
         case 'a': return {0x14, MOD_NONE};
@@ -75,39 +215,39 @@ AzertyMapping getAzertyMapping(char c) {
         case '°': return {0x2D, MOD_NONE};
 
         // Uppercase letters
-        case 'A': return {0x14, MOD_SHIFT};
-        case 'Z': return {0x1A, MOD_SHIFT};
-        case 'E': return {0x08, MOD_SHIFT};
-        case 'R': return {0x15, MOD_SHIFT};
-        case 'T': return {0x17, MOD_SHIFT};
-        case 'Y': return {0x1C, MOD_SHIFT};
-        case 'U': return {0x18, MOD_SHIFT};
-        case 'I': return {0x0C, MOD_SHIFT};
-        case 'O': return {0x12, MOD_SHIFT};
-        case 'P': return {0x13, MOD_SHIFT};
-        case 'Q': return {0x04, MOD_SHIFT};
-        case 'S': return {0x16, MOD_SHIFT};
-        case 'D': return {0x07, MOD_SHIFT};
-        case 'F': return {0x09, MOD_SHIFT};
-        case 'G': return {0x0A, MOD_SHIFT};
-        case 'H': return {0x0B, MOD_SHIFT};
-        case 'J': return {0x0D, MOD_SHIFT};
-        case 'K': return {0x0E, MOD_SHIFT};
-        case 'L': return {0x0F, MOD_SHIFT};
-        case 'M': return {0x33, MOD_SHIFT};
-        case 'W': return {0x1D, MOD_SHIFT};
-        case 'X': return {0x1B, MOD_SHIFT};
-        case 'C': return {0x06, MOD_SHIFT};
-        case 'V': return {0x19, MOD_SHIFT};
-        case 'B': return {0x05, MOD_SHIFT};
-        case 'N': return {0x11, MOD_SHIFT};
+        case 'A': return {0x14, MOD_LEFT_SHIFT};
+        case 'Z': return {0x1A, MOD_LEFT_SHIFT};
+        case 'E': return {0x08, MOD_LEFT_SHIFT};
+        case 'R': return {0x15, MOD_LEFT_SHIFT};
+        case 'T': return {0x17, MOD_LEFT_SHIFT};
+        case 'Y': return {0x1C, MOD_LEFT_SHIFT};
+        case 'U': return {0x18, MOD_LEFT_SHIFT};
+        case 'I': return {0x0C, MOD_LEFT_SHIFT};
+        case 'O': return {0x12, MOD_LEFT_SHIFT};
+        case 'P': return {0x13, MOD_LEFT_SHIFT};
+        case 'Q': return {0x04, MOD_LEFT_SHIFT};
+        case 'S': return {0x16, MOD_LEFT_SHIFT};
+        case 'D': return {0x07, MOD_LEFT_SHIFT};
+        case 'F': return {0x09, MOD_LEFT_SHIFT};
+        case 'G': return {0x0A, MOD_LEFT_SHIFT};
+        case 'H': return {0x0B, MOD_LEFT_SHIFT};
+        case 'J': return {0x0D, MOD_LEFT_SHIFT};
+        case 'K': return {0x0E, MOD_LEFT_SHIFT};
+        case 'L': return {0x0F, MOD_LEFT_SHIFT};
+        case 'M': return {0x33, MOD_LEFT_SHIFT};
+        case 'W': return {0x1D, MOD_LEFT_SHIFT};
+        case 'X': return {0x1B, MOD_LEFT_SHIFT};
+        case 'C': return {0x06, MOD_LEFT_SHIFT};
+        case 'V': return {0x19, MOD_LEFT_SHIFT};
+        case 'B': return {0x05, MOD_LEFT_SHIFT};
+        case 'N': return {0x11, MOD_LEFT_SHIFT};
 
         // Special characters
         case '?': return {0x38, MOD_NONE};
         case '.': return {0x37, MOD_NONE};
         case '/': return {0x36, MOD_NONE};
-        case '+': return {0x2E, MOD_SHIFT};
-        case '_': return {0x2D, MOD_SHIFT};
+        case '+': return {0x2E, MOD_LEFT_SHIFT};
+        case '_': return {0x2D, MOD_LEFT_SHIFT};
 
         // Whitespace and control
         case ' ': return {0x2C, MOD_NONE};
@@ -117,3 +257,4 @@ AzertyMapping getAzertyMapping(char c) {
         default: return {0x00, MOD_NONE};
     }
 }
+*/

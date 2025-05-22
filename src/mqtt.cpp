@@ -10,29 +10,49 @@
 #include "USBHIDKeyboard.h"
 #include "USBHIDConsumerControl.h"
 
+#include "keyevent.pb.h"
+
+#include <pb_decode.h>
+#include <pb_encode.h>
+
+#include <Elog.h>
+
+
 // https://randomnerdtutorials.com/esp32-mqtt-publish-subscribe-arduino-ide/
 // https://github.com/knolleary/pubsubclient
 // https://gist.github.com/igrr/7f7e7973366fc01d6393
 
-unsigned long reconnectInterval = 5000;
+unsigned long reconnectInterval = 15000;
 // in order to do reconnect immediately ...
 unsigned long lastReconnectAttempt = millis() - reconnectInterval - 1;
 unsigned long timerStartForHAdiscovery = 1;
 
-void callback(char* topic, byte* payload, unsigned int length);
-
-WiFiClient wifiClient;
-
-PubSubClient mqttClient(MQTT_SERVER, MQTT_SERVER_PORT, callback, wifiClient);
-
 bool checkMQTTconnection();
+bool publishMQTTMessage(const char* topic, const char* payload, boolean retained, uint8_t len);
+void onMqttMessage(char* topic, uint8_t* payload, unsigned int len);
+
+WiFiClient wifiClient;   
+PubSubClient mqttClient(MQTT_SERVER , MQTT_SERVER_PORT, onMqttMessage, wifiClient);
 
 void mqtt_setup() {
   // Set bigger buffer size if needed
-  //mqttClient.setBufferSize(1540);
+  mqttClient.setBufferSize(1540);
+  //mqttClient.setCallback(onMqttMessage);
+  //mqttClient.onPublish(onMqttPublish);
+  //mqttClient.onConnect(onMqttConnect);
+  //mqttClient.setCredentials(MQTT_USER, MQTT_PASS);
+  //mqttClient.setAutoReconnect(true);
+}
+
+
+void onMqttConnect(bool sessionPresent) {
+  Logger.log(LOGGING_ID, ELOG_LEVEL_INFO, "Connected to MQTT.");
+  mqttClient.subscribe(MQTTCMND_WILDCARD, 0);
 }
 
 void mqtt_loop(){
+  // Handle MQTT client loop
+  
   if (!mqttClient.connected()) {
     unsigned long currentMillis = millis();
     if ((currentMillis - lastReconnectAttempt) > reconnectInterval) {
@@ -56,44 +76,13 @@ bool checkMQTTconnection() {
     } else {
       // try to connect to mqtt server
       if (mqttClient.connect(MQTT_CLIENTNAME, MQTT_USER, MQTT_PASS)) {
-        Serial.printf("  Successfully connected to MQTT broker\r\n");
-    
-        // subscribes to messages with given topic.
+        Logger.log(LOGGING_ID, ELOG_LEVEL_INFO, "Successfully connected to MQTT broker.");
+        // subscribes to all relevant messages with given topic. 
+        // wildcard subscribes for everything on the 3rd topic part: "/cmnd/#" e.g. esphid1/cmnd/ESC
         // Callback function will be called 1. in client.loop() 2. when sending a message
         mqttClient.subscribe(MQTTCMND_WILDCARD);
-        /*
-        mqttClient.subscribe(MQTTCMND_UP);
-        mqttClient.subscribe(MQTTCMND_DOWN);
-        mqttClient.subscribe(MQTTCMND_RIGHT);
-        mqttClient.subscribe(MQTTCMND_LEFT);
-        mqttClient.subscribe(MQTTCMND_SELECT);
-        mqttClient.subscribe(MQTTCMND_SENDSTRING);
-        mqttClient.subscribe(MQTTCMND_ENTER);
-        mqttClient.subscribe(MQTTCMND_ESC);
-
-        mqttClient.subscribe(MQTTCMND_BACKSPACE);
-        mqttClient.subscribe(MQTTCMND_DEL);
-        mqttClient.subscribe(MQTTCMND_FUNCTION);
-
-        mqttClient.subscribe(MQTTCMND_BACK);
-        mqttClient.subscribe(MQTTCMND_HOME);
-        mqttClient.subscribe(MQTTCMND_MENU);
-
-        mqttClient.subscribe(MQTTCMND_SCAN_PREVIOUS_TRACK);
-        mqttClient.subscribe(MQTTCMND_REWIND_LONG);
-        mqttClient.subscribe(MQTTCMND_REWIND);
-        mqttClient.subscribe(MQTTCMND_PLAYPAUSE);
-        mqttClient.subscribe(MQTTCMND_FASTFORWARD);
-        mqttClient.subscribe(MQTTCMND_FASTFORWARD_LONG);
-        mqttClient.subscribe(MQTTCMND_SCAN_NEXT_TRACK);
-        mqttClient.subscribe(MQTTCMND_MUTE);
-        mqttClient.subscribe(MQTTCMND_VOLUME_INCREMENT);
-        mqttClient.subscribe(MQTTCMND_VOLUME_DECREMENT);
-
-        mqttClient.subscribe(MQTTCMND_RESTART_ESP32);
-        */
       } else {
-        Serial.printf("  MQTT connection failed (but WiFi is available). Will try later ...\r\n");
+        Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "MQTT connection failed (but WiFi is available). Will try later ...");
       }
       return mqttClient.connected();
     }
@@ -103,28 +92,25 @@ bool checkMQTTconnection() {
   }  
 }
 
-bool publishMQTTMessage(const char *topic, const char *payload, boolean retained){
-  if (wifiIsDisabled) return false;
 
+bool publishMQTTMessage(const char *topic, const char* payload, boolean retained, uint8_t len){
+  if (wifiIsDisabled) return false;
   if (checkMQTTconnection()) {
-    // Serial.printf("Sending mqtt payload to topic \"%s\": %s\r\n", topic, payload);
-      
-    if (mqttClient.publish(topic, payload, retained)) {
-      // Serial.printf("Publish ok\r\n");
+    // Serial.printf("Sending mqtt payload to topic \"%s\": %s\r\n", topic, payload);      
+    if (mqttClient.publish(topic, (uint8_t*)payload, len, 0)) {
+      Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "Published mqtt %s ", topic);
       return true;
     }
     else {
-      Serial.printf("Publish failed\r\n");
+      Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "Publish mqtt %s failed ", topic);
     }
   } else {
-    Serial.printf("  Cannot publish mqtt message, because checkMQTTconnection failed (WiFi or mqtt is not connected)\r\n");
+    Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "Cannot Publish mqtt %s  ", topic);
   }
   return false;
 }
 
-bool publishMQTTMessage(const char *topic, const char *payload){
-  return publishMQTTMessage(topic, payload, false);
-}
+
 
 bool mqtt_publish_tele() {
   bool error = false;
@@ -144,7 +130,8 @@ bool mqtt_publish_tele() {
   payload += ",\"IP\":";
   payload += WiFi.localIP().toString();
   payload += "}";
-  error = error || !publishMQTTMessage(MQTTTELESTATE1, payload.c_str());
+  error = error || !publishMQTTMessage(MQTTTELESTATE1, payload.c_str(), 0, payload.length());
+  Logger.log(LOGGING_ID, ELOG_LEVEL_INFO, payload.c_str());
 
   // ESP32 stats
   payload = "";
@@ -159,85 +146,154 @@ bool mqtt_publish_tele() {
   payload += ",\"heapMax\":";
   payload += String(ESP.getMaxAllocHeap());
   payload += "}";
-  error = error || !publishMQTTMessage(MQTTTELESTATE2, payload.c_str());
+  Logger.log(LOGGING_ID, ELOG_LEVEL_INFO, payload.c_str());
 
   return !error;
 }
 
-void callback(char* topic, byte* payload, unsigned int length) {
-    // handle message arrived
-    std::string strPayload(reinterpret_cast<const char *>(payload), length);
 
-  // Serial.printf("MQTT message arrived [%s] %s\r\n", topic, strPayload.c_str());
+uint32_t decodeUtf8(const uint8_t * data, size_t length, size_t startIndex ) {
+    if (length <= startIndex) return 0;
+
+    uint8_t first = data[startIndex];
+    if (first < 0x80) {
+        // 1-byte (ASCII)
+        return first;
+    } else if ((first & 0xE0) == 0xC0 && startIndex + 1 < length) {
+        // 2-byte sequence
+        return ((first & 0x1F) << 6) |
+               (data[startIndex + 1] & 0x3F);
+    } else if ((first & 0xF0) == 0xE0 && startIndex + 2 < length) {
+        // 3-byte sequence
+        return ((first & 0x0F) << 12) |
+               ((data[startIndex + 1] & 0x3F) << 6) |
+               (data[startIndex + 2] & 0x3F);
+    } else if ((first & 0xF8) == 0xF0 && startIndex + 3 < length) {
+        // 4-byte sequence
+        return ((first & 0x07) << 18) |
+               ((data[startIndex + 1] & 0x3F) << 12) |
+               ((data[startIndex + 2] & 0x3F) << 6) |
+               (data[startIndex + 3] & 0x3F);
+    }
+    // Invalid or incomplete UTF-8
+//    mqttlog("decodeUtf8","Invalid or incomplete UTF-8");
+
+    return 0;
+}
+
+void dumpPayloadBytes(const char* label, const uint8_t* payload, size_t length) {
+    char buf[128];
+    char* ptr = buf;
+
+    for (size_t i = 0; i < length && i < sizeof(buf)/3 - 1; ++i) {
+        ptr += snprintf(ptr, buf + sizeof(buf) - ptr, "%02X ", payload[i]);
+    }
+    Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "Payload bytes (%d): %s", (int)length, buf);
+}
+
+void onMqttMessage(char* topic, uint8_t* payload, size_t len) {
+  Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "Topic: %s, Length: %i", topic, len);  
+  dumpPayloadBytes("payload", (const uint8_t*)payload, len);
+
+  if (strcmp(MQTTCMND_BEANWRITE, topic) == 0) {
+    ProtoKeyEvent keyEvent = ProtoKeyEvent_init_zero;
+    keyEvent.modifier = 0;
+    snprintf(keyEvent.functionkey, sizeof(keyEvent.functionkey), "t");
+    snprintf(keyEvent.sendstring, sizeof(keyEvent.sendstring), "");
+   
+    uint8_t buffer[156];
+    pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
+    if (!pb_encode(&stream, ProtoKeyEvent_fields, &keyEvent)) {
+      Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "encode fail Error encoding: %s", PB_GET_ERROR(&stream));  
+        return;
+    }
+
+    mqttClient.publish(MQTTCMND_WRITE, buffer, stream.bytes_written);    
+  } else if (strcmp(MQTTCMND_WRITE, topic) == 0) {
+      ProtoKeyEvent keyEvent = ProtoKeyEvent_init_zero;
+      pb_istream_t stream = pb_istream_from_buffer(payload, len);
+
+      if (!pb_decode(&stream, ProtoKeyEvent_fields, &keyEvent)) {
+          Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "Failed to decode topic %s - %s ", topic, PB_GET_ERROR(&stream));  
+          return;
+      }
+
+      char c = keyEvent.functionkey[0];
+      if (c != 0x00 ) {
+        //add the azerty mapping too !
+        sendMappedChar(c, keyEvent.modifier);
+    } else {
+       Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "no typed character");  
+    }
+  } else if (strcmp(MQTTCMND_FUNCTION, topic) == 0) {
+      ProtoKeyEvent keyEvent = ProtoKeyEvent_init_zero;
+      pb_istream_t stream = pb_istream_from_buffer(payload, len);
+
+      if (!pb_decode(&stream, ProtoKeyEvent_fields, &keyEvent)) {
+          Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "Failed to decode topic %s - %s ", topic, PB_GET_ERROR(&stream));  
+          return;
+      }
+
+    std::string functionStr(keyEvent.functionkey);
+    keyboard_function(functionStr, keyEvent.modifier);
+
+  }
+  /*
+  ProtoKeyEvent keyEvent = ProtoKeyEvent_init_zero;
+  pb_istream_t stream = pb_istream_from_buffer((const uint8_t*)payload, len);
+
+  if (!pb_decode(&stream, ProtoKeyEvent_fields, &keyEvent)) {
+    mqttlog("decode-fail", "Error decoding: %s", PB_GET_ERROR(&stream));
+    return;
+  }
+
+  mqttlog("keyevent", "key=%s, mod=%u, send=%s", keyEvent.functionkey,
+          keyEvent.modifier, keyEvent.sendstring);
+*/
+}
+
+/*
+void callback(char* topic, byte* payload, unsigned int length) {
+
+  mqttlog("callback-1", "topic: %s, length: %u", topic, length);
+  dumpPayloadBytes("callback-raw", payload, length);  // Log raw bytes first
+
+  ProtoKeyEvent keyEvent = ProtoKeyEvent_init_zero;
+  pb_istream_t stream = pb_istream_from_buffer(payload, length);
+
+  if (!pb_decode(&stream, ProtoKeyEvent_fields, &keyEvent)) {
+        mqttlog("callback-error", "Failed to decode topic %s", topic);
+        mqttlog("callback-error-stream", PB_GET_ERROR(&stream));      
+      return;
+  }
+
+  mqttlog("callback-ok", "key=%s, mod=%u %s", keyEvent.functionkey, keyEvent.modifier, keyEvent.sendstring);
+
 
   bool doLog = false;
 
-  // for more keycodes see
-  // https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/src/USBHIDKeyboard.h
-  // or here (please consider offset of values! For this please examine keys which are both in the arduino-esp32 library and the Adafruit CircuitPython library)
-  // https://github.com/adafruit/Adafruit_CircuitPython_HID/blob/main/adafruit_hid/keycode.py
-  if (strcmp(MQTTCMND_UP, topic) == 0) {
-    if (doLog) {Serial.printf("UP received\r\n");}
-    keyboard_write(KEY_UP_ARROW);
-
-  } else if (strcmp(MQTTCMND_DOWN, topic) == 0) {
-    if (doLog) {Serial.printf("DOWN received\r\n");}
-    keyboard_write(KEY_DOWN_ARROW);
-
-  } else if (strcmp(MQTTCMND_RIGHT, topic) == 0) {
-    if (doLog) {Serial.printf("RIGHT received\r\n");}
-    keyboard_write(KEY_RIGHT_ARROW);
-
-  } else if (strcmp(MQTTCMND_LEFT, topic) == 0) {
-    if (doLog) {Serial.printf("LEFT received\r\n");}
-    keyboard_write(KEY_LEFT_ARROW);
-
-  } else if (strcmp(MQTTCMND_ESC, topic) == 0) {
-    if (doLog) {Serial.printf("ESC received\r\n");}
-    keyboard_write(KEY_ESC);
-
-  } else if (strcmp(MQTTCMND_ENTER, topic) == 0) {
-    if (doLog) {Serial.printf("ENTER received\r\n");}
-    keyboard_write(KEY_RETURN);
-
-  } else if (strcmp(MQTTCMND_SENDSTRING, topic) == 0) {
-    if (doLog) {Serial.printf("SENDSTRING received\r\n");}
-    if (strPayload != "") {
-      keyboard_sendString(strPayload.c_str());
+  if (strcmp(MQTTCMND_WRITE, topic) == 0) {
+    char c = keyEvent.functionkey[0];
+    if (c != 0x00 ) {
+      //add the azerty mapping too !
+      sendMappedChar(c, keyEvent.modifier);
+    } else {
+      mqttlog("callback-error","no typed character ");
     }
-  } else if (strcmp(MQTTCMND_BACKSPACE, topic) == 0) {
-    if (doLog) {Serial.printf("BACKSPACE received\r\n");}
-    keyboard_write(KEY_BACKSPACE);
-  } else if (strcmp(MQTTCMND_DEL, topic) == 0) {
-    if (doLog) {Serial.printf("DEL received\r\n");}
-    keyboard_write(KEY_DELETE);
   } else if (strcmp(MQTTCMND_FUNCTION, topic) == 0) {
     if (doLog) {Serial.printf("FUNCTION received\r\n");}
-    if (strcmp("F1", strPayload.c_str())==0)
-      keyboard_write(KEY_F1);
-    else if (strcmp("F2", strPayload.c_str())==0)
-      keyboard_write(KEY_F2);
-    else if (strcmp("F11", strPayload.c_str())==0)
-      keyboard_write(KEY_F11);
-  } else if (strcmp(MQTTCMND_BACK, topic) == 0) {
-    if (doLog) {Serial.printf("BACK received\r\n");}
-    // test which one works best for your device
-    // keyboard_write(KEY_ESC);
-    consumerControl_write(CONSUMER_CONTROL_BACK);
-
-  } else if (strcmp(MQTTCMND_HOME, topic) == 0) {
-    if (doLog) {Serial.printf("HOME received\r\n");}
-    // test which one works best for your device
-    // keyboard_home();
-    consumerControl_write(CONSUMER_CONTROL_HOME);
+    std::string functionStr(keyEvent.functionkey);
+    keyboard_function(functionStr, keyEvent.modifier);
 
   } else if (strcmp(MQTTCMND_MENU, topic) == 0) {
     if (doLog) {Serial.printf("MENU received\r\n");}
-    keyboard_write(0xED); // 0xDA + 13 = 0xED
+    keyboard_write(0xED, MOD_NONE); // 0xDA + 13 = 0xED
 
-  // for more consumerControl codes see
-  // https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/src/USBHIDConsumerControl.h
-  // https://github.com/adafruit/Adafruit_CircuitPython_HID/blob/main/adafruit_hid/consumer_control_code.py
+  } else if (strcmp(MQTTCMND_SENDSTRING, topic) == 0) {
+    if (doLog) {Serial.printf("SENDSTRING received\r\n");}
+    std::string sendStr(keyEvent.sendstring);
+    keyboard_sendString(sendStr);
+
   } else if (strcmp(MQTTCMND_SCAN_PREVIOUS_TRACK, topic) == 0) {
     if (doLog) {Serial.printf("SCAN_PREVIOUS_TRACK received\r\n");}
     consumerControl_write(CONSUMER_CONTROL_SCAN_PREVIOUS);
@@ -266,8 +322,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (doLog) {Serial.printf("SCAN_NEXT_TRACK received\r\n");}
     consumerControl_write(CONSUMER_CONTROL_SCAN_NEXT);
 
-
-
   } else if (strcmp(MQTTCMND_MUTE, topic) == 0) {
     if (doLog) {Serial.printf("MUTE received\r\n");}
     consumerControl_write(CONSUMER_CONTROL_MUTE);
@@ -284,6 +338,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (doLog) {Serial.printf("RESTART_ESP32 received\r\n");}
     ESP.restart();
 
+  } else {
+    //errorLog("topic not parsed %s ", topic);
   }
 
+
+
+
 }
+
+*/

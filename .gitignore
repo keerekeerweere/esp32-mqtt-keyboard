@@ -5,3 +5,11 @@
 .vscode/launch.json
 .vscode/ipch
 src/config_override.h
+html/secrets.js
+yakvm-app/.env
+yakvm-app/dist
+yakvm-app/node_modules
+
+yakvm-py/venv/*
+yakvm-py/.env
+lib/elog-2.0.5/*

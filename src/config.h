@@ -32,6 +32,12 @@
 #define useOTAUpdate
 // #define useOTA_RTOS
 
+// LOGGING
+#define LOGGING_ID 1
+#define SYSLOG_SERVER "syslog.example.com"
+#define SYSLOG_PORT 514
+
+
 // --- include override settings from seperate file -----------------------------------------------------------------------------------------
 #if __has_include("config_override.h")
   #include "config_override.h"
