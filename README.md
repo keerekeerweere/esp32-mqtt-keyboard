@@ -11,8 +11,7 @@ The ESP32 S3 Supermini normally has one USB connectors:
     * used to upload the firmware for the first time only, afterwards OTA should be used
     * used to connect the ESP32 S3 as a keyboard to your device
 
-
-
+![Esp32-s3 Supermini](https://raw.githubusercontent.com/keerekeerweere/esp32-mqtt-keyboard/main/images/ESP32-S3-SuperMini.png)
 
 ## Installation
 I used PlatformIO IDE for installation and flashing. Please have a look at <a href="https://docs.platformio.org/en/latest/integration/ide/vscode.html#installation">this guide</a>. It is as simple as:
