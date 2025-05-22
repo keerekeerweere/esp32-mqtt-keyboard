@@ -25,7 +25,7 @@ std::map<std::string, uint8_t> map_jskey_hid = {
     { MQTT_FUNCTION_SHIFT,       KEY_LEFT_SHIFT },
     { MQTT_FUNCTION_CONTROL,     KEY_LEFT_CTRL },
     { MQTT_FUNCTION_ALT,         KEY_LEFT_ALT },
-//    { MQTT_FUNCTION_META,        KEY_META },
+    { MQTT_FUNCTION_META,        KEY_LEFT_GUI },
     { MQTT_FUNCTION_CAPSLOCK,    KEY_CAPS_LOCK },
 //    { MQTT_FUNCTION_CONTEXTMENU, KEY_CONTEXT_MENU },
 
