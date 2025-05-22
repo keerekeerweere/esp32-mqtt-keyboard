@@ -1,9 +1,33 @@
 
-# esp32 mqtt keyboard
+# yakvm - yet another kvm
 ## Overview
-This project turns an ESP32 <b>S3</b> into a HID keyboard. The keyboard emulates an <b>USB keyboard</b>, not a bluetooth keyboard.
-* only works with an ESP32 S3 (tested) or ESP32 S2 (not tested), because the original ESP32 does not support native USB OTG
-* Keystrokes can be send with MQTT commands (e.g. topic "esp32_keyboard/cmnd/UP", payload doesn't matter)
+This setup enables remote control of a physical server, PC, or laptop using a lightweight KVM system built with an ESP32-S3 and a repurposed thin client. The system allows HDMI-over-IP video streaming and remote keystroke injection via MQTT.
+## System Components and Data Flow
+
+![Esp32-s3 Supermini](https://raw.githubusercontent.com/keerekeerweere/esp32-mqtt-keyboard/main/images/overview.png)
+
+* Server, PC, or Laptop
+ - HDMI Output is connected to a USB HDMI Capture Stick.
+ - USB Input is provided by the ESP32-S3, which emulates a keyboard.
+
+* USB HDMI Capture Stick
+- Transfers the HDMI signal to the KVM device for processing and streaming.
+
+* KVM Device (e.g., HP T520 Thin Client) Runs:
+- uStreamer – Streams the HDMI video using the USB capture stick.
+- NGINX – Serves an HTML5 page with the video stream and keystroke input.
+- Mosquitto – MQTT broker that forwards keystrokes.
+- Receives HDMI from the source machine and streams it to client browsers.
+- Forwards keystrokes received from clients via MQTT.
+
+* Client Device (Any HTML5-Capable Browser)
+- Views the HDMI video stream served by the KVM device.
+- Sends keyboard input via MQTT to the KVM's Mosquitto server.
+
+* ESP32-S3
+- Subscribes to the MQTT topic over Wi-Fi.
+- Receives keystrokes from the KVM device.
+- Emulates a USB keyboard, injecting input directly into the server, PC, or laptop.
 
 ## ESP32 S3 connections
 The ESP32 S3 Supermini normally has one USB connectors:
