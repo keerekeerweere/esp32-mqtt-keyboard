@@ -16,6 +16,21 @@ const KeyMapEntry azertyKeyMap[] = {
     {')', {0x2D, MOD_NONE}},
     {'-', {0x2E, MOD_NONE}},
 
+
+    {'1', {0x1E, MOD_LEFT_SHIFT}},
+    {'2', {0x1F, MOD_LEFT_SHIFT}}, // 
+    {'3', {0x20, MOD_LEFT_SHIFT}},
+    {'4', {0x21, MOD_LEFT_SHIFT}},
+    {'5', {0x22, MOD_LEFT_SHIFT}},
+    {'6', {0x23, MOD_LEFT_SHIFT}}, // 
+    {'7', {0x24, MOD_LEFT_SHIFT}}, // 
+    {'8', {0x25, MOD_LEFT_SHIFT}},
+    {'9', {0x26, MOD_LEFT_SHIFT}}, // 
+    {'0', {0x27, MOD_LEFT_SHIFT}}, // 
+    {'°', {0x2D, MOD_LEFT_SHIFT}},
+    {'_', {0x2E, MOD_LEFT_SHIFT}},
+
+
     // AltGr symbols
     {'|', {0x1E, MOD_RIGHT_ALT}},
     {'@', {0x1F, MOD_RIGHT_ALT}},
@@ -40,6 +55,20 @@ const KeyMapEntry azertyKeyMap[] = {
     {'^', {0x2F, MOD_NONE}},
     {'$', {0x30, MOD_NONE}},
 
+    {'A', {0x14, MOD_LEFT_SHIFT}},
+    {'Z', {0x1A, MOD_LEFT_SHIFT}},
+    {'E', {0x08, MOD_LEFT_SHIFT}},
+    {'R', {0x15, MOD_LEFT_SHIFT}},
+    {'T', {0x17, MOD_LEFT_SHIFT}},
+    {'Y', {0x1C, MOD_LEFT_SHIFT}},
+    {'U', {0x18, MOD_LEFT_SHIFT}},
+    {'I', {0x0C, MOD_LEFT_SHIFT}},
+    {'O', {0x12, MOD_LEFT_SHIFT}},
+    {'P', {0x13, MOD_LEFT_SHIFT}},
+    {'¨', {0x2F, MOD_LEFT_SHIFT}},
+    {'*', {0x30, MOD_LEFT_SHIFT}},
+
+
     // Second row
     {'q', {0x04, MOD_NONE}},
     {'s', {0x16, MOD_NONE}},
@@ -54,6 +83,20 @@ const KeyMapEntry azertyKeyMap[] = {
     {'ù', {0x34, MOD_NONE}},
     {'µ', {0x32, MOD_NONE}},
 
+    {'Q', {0x04, MOD_LEFT_SHIFT}},
+    {'S', {0x16, MOD_LEFT_SHIFT}},
+    {'D', {0x07, MOD_LEFT_SHIFT}},
+    {'F', {0x09, MOD_LEFT_SHIFT}},
+    {'G', {0x0A, MOD_LEFT_SHIFT}},
+    {'H', {0x0B, MOD_LEFT_SHIFT}},
+    {'J', {0x0D, MOD_LEFT_SHIFT}},
+    {'K', {0x0E, MOD_LEFT_SHIFT}},
+    {'L', {0x0F, MOD_LEFT_SHIFT}},
+    {'M', {0x33, MOD_LEFT_SHIFT}}, // matches AZERTY layout
+    {'%', {0x34, MOD_LEFT_SHIFT}},
+    {'£', {0x32, MOD_LEFT_SHIFT}},
+
+
     // Third row
     {'w', {0x1D, MOD_NONE}},
     {'x', {0x1B, MOD_NONE}},
@@ -65,6 +108,17 @@ const KeyMapEntry azertyKeyMap[] = {
     {';', {0x36, MOD_NONE}},
     {':', {0x38, MOD_NONE}},
     {'=', {0x2E, MOD_NONE}},
+
+    {'W', {0x1D, MOD_LEFT_SHIFT}},
+    {'X', {0x1B, MOD_LEFT_SHIFT}},
+    {'C', {0x06, MOD_LEFT_SHIFT}},
+    {'V', {0x19, MOD_LEFT_SHIFT}},
+    {'B', {0x05, MOD_LEFT_SHIFT}},
+    {'N', {0x11, MOD_LEFT_SHIFT}},
+    {'?', {0x37, MOD_LEFT_SHIFT}},
+    {'.', {0x36, MOD_LEFT_SHIFT}},
+    {'/', {0x38, MOD_LEFT_SHIFT}},
+    {'+', {0x2E, MOD_LEFT_SHIFT}},
 
 };
 

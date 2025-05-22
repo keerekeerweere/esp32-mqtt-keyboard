@@ -53,6 +53,8 @@
         "list": "cpp",
         "ratio": "cpp",
         "mutex": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "sdfatconfig.h": "c",
+        "littlefs.h": "c"
     }
 }

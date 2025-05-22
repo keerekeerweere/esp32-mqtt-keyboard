@@ -16,7 +16,6 @@
 #include <pb_encode.h>
 
 #include <Elog.h>
-#include <ElogMacros.h>  // for logging macros like info(), error(), etc.
 
 
 // https://randomnerdtutorials.com/esp32-mqtt-publish-subscribe-arduino-ide/
@@ -47,7 +46,7 @@ void mqtt_setup() {
 
 
 void onMqttConnect(bool sessionPresent) {
-  logger.log(LOGGING_ID, INFO, "Connected to MQTT.");
+  Logger.log(LOGGING_ID, ELOG_LEVEL_INFO, "Connected to MQTT.");
   mqttClient.subscribe(MQTTCMND_WILDCARD, 0);
 }
 
@@ -77,13 +76,13 @@ bool checkMQTTconnection() {
     } else {
       // try to connect to mqtt server
       if (mqttClient.connect(MQTT_CLIENTNAME, MQTT_USER, MQTT_PASS)) {
-        logger.log(LOGGING_ID, INFO, "Successfully connected to MQTT broker.");
+        Logger.log(LOGGING_ID, ELOG_LEVEL_INFO, "Successfully connected to MQTT broker.");
         // subscribes to all relevant messages with given topic. 
         // wildcard subscribes for everything on the 3rd topic part: "/cmnd/#" e.g. esphid1/cmnd/ESC
         // Callback function will be called 1. in client.loop() 2. when sending a message
         mqttClient.subscribe(MQTTCMND_WILDCARD);
       } else {
-        logger.log(LOGGING_ID, ERROR, "MQTT connection failed (but WiFi is available). Will try later ...");
+        Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "MQTT connection failed (but WiFi is available). Will try later ...");
       }
       return mqttClient.connected();
     }
@@ -99,14 +98,14 @@ bool publishMQTTMessage(const char *topic, const char* payload, boolean retained
   if (checkMQTTconnection()) {
     // Serial.printf("Sending mqtt payload to topic \"%s\": %s\r\n", topic, payload);      
     if (mqttClient.publish(topic, (uint8_t*)payload, len, 0)) {
-      logger.log(LOGGING_ID, DEBUG, "Published mqtt %s ", topic);
+      Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "Published mqtt %s ", topic);
       return true;
     }
     else {
-      logger.log(LOGGING_ID, ERROR, "Publish mqtt %s failed ", topic);
+      Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "Publish mqtt %s failed ", topic);
     }
   } else {
-    logger.log(LOGGING_ID, ERROR, "Cannot Publish mqtt %s  ", topic);
+    Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "Cannot Publish mqtt %s  ", topic);
   }
   return false;
 }
@@ -132,7 +131,7 @@ bool mqtt_publish_tele() {
   payload += WiFi.localIP().toString();
   payload += "}";
   error = error || !publishMQTTMessage(MQTTTELESTATE1, payload.c_str(), 0, payload.length());
-  logger.log(LOGGING_ID, INFO, payload.c_str());
+  Logger.log(LOGGING_ID, ELOG_LEVEL_INFO, payload.c_str());
 
   // ESP32 stats
   payload = "";
@@ -147,7 +146,7 @@ bool mqtt_publish_tele() {
   payload += ",\"heapMax\":";
   payload += String(ESP.getMaxAllocHeap());
   payload += "}";
-  logger.log(LOGGING_ID, INFO, payload.c_str());
+  Logger.log(LOGGING_ID, ELOG_LEVEL_INFO, payload.c_str());
 
   return !error;
 }
@@ -189,11 +188,11 @@ void dumpPayloadBytes(const char* label, const uint8_t* payload, size_t length) 
     for (size_t i = 0; i < length && i < sizeof(buf)/3 - 1; ++i) {
         ptr += snprintf(ptr, buf + sizeof(buf) - ptr, "%02X ", payload[i]);
     }
-    logger.log(LOGGING_ID, DEBUG, "Payload bytes (%d): %s", (int)length, buf);
+    Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "Payload bytes (%d): %s", (int)length, buf);
 }
 
 void onMqttMessage(char* topic, uint8_t* payload, size_t len) {
-  logger.log(LOGGING_ID, DEBUG, "Topic: %s, Length: %i", topic, len);  
+  Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "Topic: %s, Length: %i", topic, len);  
   dumpPayloadBytes("payload", (const uint8_t*)payload, len);
 
   if (strcmp(MQTTCMND_BEANWRITE, topic) == 0) {
@@ -205,7 +204,7 @@ void onMqttMessage(char* topic, uint8_t* payload, size_t len) {
     uint8_t buffer[156];
     pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
     if (!pb_encode(&stream, ProtoKeyEvent_fields, &keyEvent)) {
-      logger.log(LOGGING_ID, ERROR, "encode fail Error encoding: %s", PB_GET_ERROR(&stream));  
+      Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "encode fail Error encoding: %s", PB_GET_ERROR(&stream));  
         return;
     }
 
@@ -215,7 +214,7 @@ void onMqttMessage(char* topic, uint8_t* payload, size_t len) {
       pb_istream_t stream = pb_istream_from_buffer(payload, len);
 
       if (!pb_decode(&stream, ProtoKeyEvent_fields, &keyEvent)) {
-          logger.log(LOGGING_ID, ERROR, "Failed to decode topic %s - %s ", topic, PB_GET_ERROR(&stream));  
+          Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "Failed to decode topic %s - %s ", topic, PB_GET_ERROR(&stream));  
           return;
       }
 
@@ -224,14 +223,14 @@ void onMqttMessage(char* topic, uint8_t* payload, size_t len) {
         //add the azerty mapping too !
         sendMappedChar(c, keyEvent.modifier);
     } else {
-      mqttlog("callback-error","no typed character ");
+       Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "no typed character");  
     }
   } else if (strcmp(MQTTCMND_FUNCTION, topic) == 0) {
       ProtoKeyEvent keyEvent = ProtoKeyEvent_init_zero;
       pb_istream_t stream = pb_istream_from_buffer(payload, len);
 
       if (!pb_decode(&stream, ProtoKeyEvent_fields, &keyEvent)) {
-          logger.log(LOGGING_ID, ERROR, "Failed to decode topic %s - %s ", topic, PB_GET_ERROR(&stream));  
+          Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "Failed to decode topic %s - %s ", topic, PB_GET_ERROR(&stream));  
           return;
       }
 

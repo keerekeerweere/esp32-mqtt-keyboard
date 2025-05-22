@@ -5,7 +5,6 @@
 #include "keyboard_map.h"
 
 #include <Elog.h>
-#include <ElogMacros.h>  // for logging macros like info(), error(), etc.
 
 
 

@@ -65,19 +65,19 @@ void keyboard_setup() {
 void sendMappedChar(uint32_t c, uint8_t modifier) {
   KeyEvent e = getMappedKeyEvent(c);
   if (e.keycode == 0) {
-    logger.log(LOGGING_ID, ERROR, "sendMappedChar - no key found for UTF-8: U+%04lX", c);  
+    Logger.log(LOGGING_ID, ELOG_LEVEL_ERROR, "sendMappedChar - no key found for UTF-8: U+%04lX", c);  
     return;
   }
   uint8_t key = e.keycode;
   uint8_t mod = (e.modifier != MOD_NONE)  ? e.modifier : modifier;
-  logger.log(LOGGING_ID, DEBUG, "sendMappedChar - found keycode %02X and mod  %02X", key, mod);  
+  Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "sendMappedChar - found keycode %02X and mod  %02X", key, mod);  
 
   keyboard_write(key, mod);
 }
 
 
 void keyboard_write(uint8_t key, uint8_t modifier) {
-  logger.log(LOGGING_ID, DEBUG, "keyboard_write : %u", key);
+  Logger.log(LOGGING_ID, ELOG_LEVEL_DEBUG, "keyboard_write : %u", key);
 
   if (modifier != MOD_NONE) {
         //decode possibly multiple modifiers

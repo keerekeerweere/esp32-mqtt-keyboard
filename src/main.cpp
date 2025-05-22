@@ -6,11 +6,13 @@
 #include "mqtt.h"
 #include "keyboard.h"
 
+
+
+
 #include <Elog.h>
-#include <ElogMacros.h>  // for logging macros like info(), error(), etc.
 
 #define MYLOG 0
-
+#define ELOG_SYSLOG_ENABLE 1
 
 #if defined(useOTAUpdate)
   // https://github.com/SensorsIot/ESP32-OTA
@@ -30,8 +32,8 @@ unsigned long previousMillis10000Cycle = 0;
 unsigned long interval10000Cycle = 10000;
 
 void logger_setup(void) {
-    logger.configureSyslog(SYSLOG_SERVER, SYSLOG_PORT, UNIQUE_DEVICE_NAME); // Syslog server IP, port and device name
-    logger.registerSyslog(LOGGING_ID, DEBUG, FAC_USER, UNIQUE_DEVICE_NAME); // ...and syslog. Set the facility to user
+    Logger.configureSyslog(SYSLOG_SERVER, SYSLOG_PORT, UNIQUE_DEVICE_NAME); // Syslog server IP, port and device name
+    Logger.registerSyslog(LOGGING_ID, ELOG_LEVEL_DEBUG, ELOG_FAC_USER, UNIQUE_DEVICE_NAME); // ...and syslog. Set the facility to user
 }
 
 
