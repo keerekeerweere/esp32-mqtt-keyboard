@@ -82,6 +82,26 @@ document.addEventListener("DOMContentLoaded", () => {
                         metaKey: false
                     };
                     break;
+                case 'Alt+F4':
+                    data = {
+                        key: 'F4',
+                        location: 1,
+                        ctrlKey: false,
+                        shiftKey: false,
+                        altKey: true,
+                        metaKey: false
+                    };
+                    break;
+                case 'Ctrl+Z':
+                    data = {
+                        key: 'z',
+                        location: 1,
+                        ctrlKey: true,
+                        shiftKey: false,
+                        altKey: false,
+                        metaKey: false
+                    };
+                    break;
                 default:
                     return;
             }
